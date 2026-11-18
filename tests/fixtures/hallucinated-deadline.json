@@ -1,0 +1,22 @@
+{
+  "description": "The LLM produced a confident deadline_text that does NOT appear in the email body. The evidence/hallucination guard must catch this and route to review.",
+  "email": {
+    "gmailMsgId": "fix-hallucination",
+    "threadId": "t-hallucination",
+    "sender": "HR <hr@bigco.example>",
+    "subject": "Interview scheduling",
+    "snippet": "We'd love to schedule your interview. Reply with your availability.",
+    "body": "Hi,\n\nWe enjoyed reviewing your application for the Data Analyst position at BigCo. We'd love to schedule your interview. Please reply with your availability for next week.\n\nThanks,\nHR",
+    "receivedAt": "2026-11-09T12:00:00.000Z"
+  },
+  "extraction": {
+    "is_job_related": true,
+    "company": "BigCo",
+    "role": "Data Analyst",
+    "stage": "Interview",
+    "deadline_text": "by November 12 at 5pm",
+    "deadline_iso": "2026-11-12T17:00:00+05:30",
+    "links": [],
+    "confidence": 0.88
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "Assessment invite with a RELATIVE deadline (within 48 hours). System must compute the absolute IST date from received_at.",
+  "email": {
+    "gmailMsgId": "fix-rel-48h",
+    "threadId": "t-rel-48h",
+    "sender": "Priya Recruiter <priya@greenhouse.io>",
+    "subject": "Your coding assessment for Acme Corp",
+    "snippet": "Please complete the HackerRank assessment within 48 hours.",
+    "body": "Hi,\n\nThanks for applying to the Backend Engineer role at Acme Corp. The next step is an online coding assessment. Please complete the HackerRank assessment within 48 hours of receiving this email.\n\nLink: https://assessments.acme.example/abc123\n\nGood luck!\nPriya",
+    "receivedAt": "2026-11-10T09:00:00.000Z"
+  },
+  "extraction": {
+    "is_job_related": true,
+    "company": "Acme Corp",
+    "role": "Backend Engineer",
+    "stage": "Assessment",
+    "deadline_text": "within 48 hours",
+    "deadline_iso": "",
+    "links": ["https://assessments.acme.example/abc123"],
+    "confidence": 0.92
+  }
+}

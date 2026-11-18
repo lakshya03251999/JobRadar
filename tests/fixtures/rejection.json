@@ -1,0 +1,22 @@
+{
+  "description": "A rejection email. Stage must be Rejected; no deadline, no reminder.",
+  "email": {
+    "gmailMsgId": "fix-rejection",
+    "threadId": "t-rejection",
+    "sender": "Lever <no-reply@lever.co>",
+    "subject": "Update on your application",
+    "snippet": "Unfortunately we have decided not to move forward.",
+    "body": "Dear Candidate,\n\nThank you for your interest in the Frontend Engineer role at Nimbus. After careful consideration, unfortunately we have decided not to move forward with your application at this time. We wish you the best.\n\nRegards,\nNimbus Recruiting",
+    "receivedAt": "2026-11-08T15:45:00.000Z"
+  },
+  "extraction": {
+    "is_job_related": true,
+    "company": "Nimbus",
+    "role": "Frontend Engineer",
+    "stage": "Rejected",
+    "deadline_text": "",
+    "deadline_iso": "",
+    "links": [],
+    "confidence": 0.95
+  }
+}

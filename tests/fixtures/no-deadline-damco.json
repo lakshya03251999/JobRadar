@@ -1,0 +1,22 @@
+{
+  "description": "Damco-style invite with NO explicit deadline (only 'within the given timeline'). System must NOT invent a date — it should flag follow-up suggested.",
+  "email": {
+    "gmailMsgId": "fix-no-deadline",
+    "threadId": "t-no-deadline",
+    "sender": "Talent Team <careers@company.example>",
+    "subject": "Next step: Build Challenge",
+    "snippet": "Please complete the challenge within the given timeline.",
+    "body": "Hello,\n\nCongratulations! Your next step is the Build Challenge. Pick a real problem, build or design a solution, and submit within the given timeline. We look forward to seeing what you create.\n\nBest,\nTalent Team",
+    "receivedAt": "2026-11-06T06:30:00.000Z"
+  },
+  "extraction": {
+    "is_job_related": true,
+    "company": "Company",
+    "role": "Software Engineer",
+    "stage": "Assessment",
+    "deadline_text": "",
+    "deadline_iso": "",
+    "links": [],
+    "confidence": 0.84
+  }
+}

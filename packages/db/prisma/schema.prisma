@@ -1,0 +1,120 @@
+// JobRadar data model, 5 tables.
+// SQLite has no native enums, so "enum" columns are plain Strings whose allowed
+// values are listed in comments and enforced in app code via @jobradar/db string-union types.
+// We never store the full email body, only extracted fields and a snippet.
+// To deploy on Postgres: set provider = "postgresql" and point DATABASE_URL at your URL.
+// The rest of the schema stays the same.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// One row per connected user. MVP = single user, but modeled multi-user ready.
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  timezone       String   @default("Asia/Kolkata")
+  /// Gmail OAuth refresh token, AES-256-GCM encrypted at rest (see crypto.ts).
+  refreshToken   String?  @map("refresh_token")
+  /// Gmail History API cursor, lets us sync incrementally without re-reading.
+  lastHistoryId  String?  @map("last_history_id")
+  /// true if the refresh token is revoked/expired, so the UI shows "Reconnect".
+  needsReconnect Boolean  @default(false) @map("needs_reconnect")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  emails       Email[]
+  applications Application[]
+
+  @@map("users")
+}
+
+/// One row per Gmail message we have seen. `gmailMsgId` UNIQUE = idempotency:
+/// if the worker processes the same message twice, the second insert is a no-op.
+model Email {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  gmailMsgId String   @unique @map("gmail_msg_id")
+  threadId   String   @map("thread_id")
+  sender     String
+  subject    String
+  /// Short snippet only, not the full body (privacy).
+  snippet    String
+  receivedAt DateTime @map("received_at")
+  /// one of: pending | processed | failed | review  (see EmailStatus type)
+  status     String   @default("pending")
+  /// Why it landed in review (hallucination guard / low confidence / llm_failed).
+  reviewReason String? @map("review_reason")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[]
+
+  @@index([userId, status])
+  @@map("emails")
+}
+
+/// One row per company+role the user is pursuing. Stage only moves forward
+/// (except Rejected, which can arrive from any stage; Ghosted is set by cron).
+model Application {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  company        String
+  role           String?
+  /// one of: Applied | Assessment | Interview | Offer | Rejected | Ghosted
+  stage          String   @default("Applied")
+  lastActivityAt DateTime @map("last_activity_at")
+  /// Lower-cased domain of the recruiter sender, used for matching.
+  senderDomain   String?  @map("sender_domain")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[]
+
+  @@index([userId, stage])
+  @@map("applications")
+}
+
+/// A dated thing attached to an application: a deadline, interview, assessment.
+model Event {
+  id            String    @id @default(cuid())
+  applicationId String    @map("application_id")
+  /// one of: deadline | interview | assessment
+  type          String
+  dueAt         DateTime? @map("due_at")
+  confidence    Float     @default(0)
+  /// The exact substring from the email that justifies `dueAt`.
+  /// Must appear verbatim in the email (that's the hallucination guard).
+  evidenceText  String?   @map("evidence_text")
+  sourceEmailId String?   @map("source_email_id")
+  /// true when the deadline was unclear, so we flag "follow-up suggested" and send no reminder.
+  followUpSuggested Boolean @default(false) @map("follow_up_suggested")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  sourceEmail Email?      @relation(fields: [sourceEmailId], references: [id])
+  reminders   Reminder[]
+
+  @@index([applicationId])
+  @@index([dueAt])
+  @@map("events")
+}
+
+/// A scheduled notification for an event (24h before dueAt, by default).
+model Reminder {
+  id      String   @id @default(cuid())
+  eventId String   @map("event_id")
+  sendAt  DateTime @map("send_at")
+  /// how the reminder was handled; currently just logged server-side
+  channel String   @default("log")
+  sent    Boolean  @default(false)
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([sent, sendAt])
+  @@map("reminders")
+}

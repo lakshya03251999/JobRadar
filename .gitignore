@@ -1,0 +1,43 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# env & secrets  (NEVER commit these)
+.env
+.env.local
+.env.*.local
+*.pem
+tokens.json
+credentials.json
+
+# prisma
+packages/db/prisma/*.db
+packages/db/prisma/migrations/dev.db*
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# test
+coverage/
+
+# claude local settings (personal)
+.claude/settings.local.json
+
+# local video demo assets
+videoDemo/

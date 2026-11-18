@@ -1,0 +1,22 @@
+{
+  "description": "Ambiguous email; the model is unsure (confidence below 0.7). Must go to the review queue regardless of deadline.",
+  "email": {
+    "gmailMsgId": "fix-low-conf",
+    "threadId": "t-low-conf",
+    "sender": "events@meetup.example",
+    "subject": "You're invited: Tech networking night",
+    "snippet": "Join us for an evening of networking and talks.",
+    "body": "Hi there! Join us this Thursday for a tech networking evening. There will be short talks and plenty of chances to meet hiring managers. RSVP soon as spots are limited.",
+    "receivedAt": "2026-11-07T10:00:00.000Z"
+  },
+  "extraction": {
+    "is_job_related": true,
+    "company": "Meetup",
+    "role": "",
+    "stage": "Applied",
+    "deadline_text": "this Thursday",
+    "deadline_iso": "",
+    "links": [],
+    "confidence": 0.41
+  }
+}

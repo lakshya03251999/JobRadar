@@ -1,0 +1,58 @@
+# Render blueprint for the JobRadar backend (API + worker + cron in one service).
+# Deploy: push to GitHub, then "New > Blueprint" on render.com and point it here.
+# The frontend (apps/web) deploys separately on Vercel, see the Deploy section in the README.
+
+services:
+  - type: web
+    name: jobradar-worker
+    runtime: node
+    region: singapore # closest to Asia/Kolkata users
+    plan: free
+    # Install, generate the Prisma client, and create/update the DB schema.
+    buildCommand: >
+      corepack enable &&
+      pnpm install --frozen-lockfile &&
+      pnpm --filter @jobradar/db generate &&
+      pnpm --filter @jobradar/db push
+    # Run via tsx, which transpiles the worker and the @jobradar/db workspace
+    # dependency (both TypeScript) on the fly, so there's no separate build step.
+    startCommand: pnpm --filter @jobradar/worker start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PORT
+        value: "4000"
+      # The rest are secrets. Set them in the Render dashboard, not here:
+      #   DATABASE_URL, REDIS_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
+      #   GOOGLE_REDIRECT_URI, TOKEN_ENC_KEY, OPENROUTER_API_KEY, WEB_ORIGIN
+      # For deployment use Postgres (SQLite on Render's free tier is ephemeral and
+      # gets wiped on each redeploy). Set the schema provider to "postgresql" and
+      # put a Postgres URL here. REDIS_URL is optional; omit it for the in-memory queue.
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
+      - key: TOKEN_ENC_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: openai/gpt-4o-mini
+      - key: WEB_ORIGIN
+        sync: false
+      # Langfuse LLM tracing (optional). Leave the keys unset to disable.
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASEURL
+        value: https://cloud.langfuse.com
+      - key: DEFAULT_TZ
+        value: Asia/Kolkata

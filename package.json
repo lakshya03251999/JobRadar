@@ -1,0 +1,24 @@
+{
+  "name": "jobradar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JobRadar — reads recruiter emails from Gmail and auto-tracks applications, stages and deadlines.",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @jobradar/web dev",
+    "dev:worker": "pnpm --filter @jobradar/worker dev",
+    "build": "pnpm -r build",
+    "db:generate": "pnpm --filter @jobradar/db generate",
+    "db:push": "pnpm --filter @jobradar/db push",
+    "db:migrate": "pnpm --filter @jobradar/db migrate",
+    "db:studio": "pnpm --filter @jobradar/db studio",
+    "test": "pnpm --filter @jobradar/worker test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
